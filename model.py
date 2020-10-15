@@ -93,7 +93,6 @@ class SimpleUNet(M.Module):
         self.conv11 = addSig(M.Conv2d(c+32, 12, 1))
 
     def forward(self, x):
-        x = x[:, 6:21]
         size = x.shape
         x = x.reshape((size[0] * 5, 3) + size[2:])
         conv0 = tsm(self.conv0_(x))

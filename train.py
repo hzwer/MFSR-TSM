@@ -11,11 +11,9 @@ import time
 from utils import *
 import tensorboardX
 import imgaug.augmenters as iaa
-from IPython.display import Image, display
 from functools import lru_cache
 from megengine.optimizer import Adam
 from model import *
-from IPython import embed
 from megengine.data.dataset import Dataset
 from megengine.data import RandomSampler, SequentialSampler
 from megengine.data import DataLoader
@@ -30,7 +28,7 @@ optimizer = Adam(net.parameters(), lr=3e-4)
 
 train_patches = []
 gt_patches = []
-for i in range(9): 
+for i in range(5): 
     train_patches.append(TRAIN_DATA_STORAGE + str(i))
 image_list = []
 config = SublinearMemoryConfig(genetic_nr_iter=20)
@@ -68,12 +66,12 @@ def validate():
             gt_list = []
         img_list.append(img)
         gt_list.append(gt)
-        if(len(img_list) > 9):
-            img_list = img_list[-9:]
-            gt_list = gt_list[-9:]
-        if(len(img_list) == 9):
-            inp = np.zeros([9, ph, pw, 3])
-            for k in range(9):
+        if(len(img_list) > 5):
+            img_list = img_list[-5:]
+            gt_list = gt_list[-5:]
+        if(len(img_list) == 5):
+            inp = np.zeros([5, ph, pw, 3])
+            for k in range(5):
                 inp[k] = img_list[k]
             inp = np.float32(inp)
             for i in range(4):
@@ -81,7 +79,7 @@ def validate():
                     inp[4-i-1] = inp[4-i]
                 if np.abs(inp[4+i] - inp[4+i+1]).mean() > 0.2:
                     inp[4+i+1] = inp[4+i]
-            inp = inp.transpose((0, 3, 1, 2)).reshape(1, 27, ph, pw)
+            inp = inp.transpose((0, 3, 1, 2)).reshape(1, 15, ph, pw)
             img_out = inference(inp).numpy()[0]
             img_out = ((img_out * 255).transpose((1, 2, 0)).copy()[:h, :w]).astype('uint8')
             l2_list.append(((gt_list[4][:h, :w]/255. - img_out/255.)**2).mean())
@@ -176,7 +174,7 @@ class ImageDataSet(Dataset):
                 base[4-i-1] = base[4-i]
             if np.abs(base[4+i] - base[4+i+1]).mean() > 0.2:
                 base[4+i+1] = base[4+i]
-        base = np.transpose(np.array(base), (0, 3, 1, 2)).reshape(27, 128, 128)
+        base = np.transpose(np.array(base), (0, 3, 1, 2)).reshape(15, 128, 128)
         gt = np.transpose(gt, (2, 0, 1))
         return np.float32(base), np.float32(gt)
 

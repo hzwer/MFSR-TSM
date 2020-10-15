@@ -6,4 +6,8 @@ We took part in the [Megvii 1st Open-Source Super Resolution Competition](https:
 We use TSM modules to fuse information from multiple frames, and the backbone of the network is a simplified DenseNet.
 
 # Dependencies
+opencv-python
+
+tensorboardX
+
 [megengine](https://megengine.org.cn/install/)
